@@ -6,7 +6,11 @@ const User = require("../models/user.model");
 
 const { isAuthenticated, isAdmin } = require("./../middleware/jwt.middleware");
 
+
+
 const saltRounds = 10;
+
+
 
 // POST /auth/signup
 router.post("/auth/signup", async (req, res, next) => {
@@ -101,7 +105,7 @@ router.post("/auth/login", async (req, res, next) => {
         email: foundUser.email,
         name: foundUser.name,
         role: foundUser.role, // 'admin' or 'user'
-        image: foundUser.image, 
+        image: foundUser.image,
       };
 
       // Create a JWT with the payload

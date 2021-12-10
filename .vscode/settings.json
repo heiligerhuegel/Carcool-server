@@ -1,0 +1,6 @@
+{
+  "workbench.iconTheme": "vscode-icons",
+  "workbench.colorTheme": "Gruvbox Dark Hard",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true
+}
