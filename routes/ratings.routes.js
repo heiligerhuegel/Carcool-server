@@ -36,7 +36,7 @@ router.get("/api/rating/:ratingID", async (req, res, next) => {
   try {
     const { ratingID } = req.params;
 
-    const foundRating = await Rating.findById(ratingID);
+    const foundRating = await Rating.findById(ratingID).populate("user carId");
     res.status(200).json(foundRating); // load one rating
   } catch (error) {
     next(error);
@@ -56,7 +56,7 @@ router.get("/api/newrating", async (req, res, next) => {
 router.post("/api/newrating", async (req, res, next) => {
   try {
     let CarId;
-    const { user, brand, model, title, description, ratings } = req.body;
+    const { user, brand, model, title, description, totalScore, ratings } = req.body;
     const foundCar = await Car.findOne({ brand: brand, model: model }); // find car by brand and models
 
     if (!foundCar) {
@@ -72,13 +72,14 @@ router.post("/api/newrating", async (req, res, next) => {
       carId: CarId,
       title: title,
       description: description,
+      totalScore: totalScore,
       ratings: ratings,
     };
 
     const createdRating = await Rating.create(newRating);
 
     await Car.findByIdAndUpdate(CarId, {
-      $push: { ratings: createdRating._id },
+      $push: { ratings: createdRating._id, overallTotalScore: createdRating.totalScore },
     });
 
     // update totalscore here
