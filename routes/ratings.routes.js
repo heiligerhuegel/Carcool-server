@@ -36,8 +36,20 @@ router.get("/api/rating/:ratingID", async (req, res, next) => {
   try {
     const { ratingID } = req.params;
 
-    const foundRating = await Rating.findById(ratingID).populate("user carId");
+    const foundRating = await Rating.findById(ratingID).populate("carId user");
     res.status(200).json(foundRating); // load one rating
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.put("/api/rating/:ratingID", async (req, res, next) => {
+  try {
+    const { ratingID } = req.params;
+    const { title, description, ratings } = req.body;
+
+    const updatedRating = await Rating.findByIdAndUpdate(ratingID, { title, description, ratings }, { new: true });
+    res.status(200).json(updatedRating); // load one rating
   } catch (error) {
     next(error);
   }
@@ -56,12 +68,11 @@ router.get("/api/newrating", async (req, res, next) => {
 router.post("/api/newrating", async (req, res, next) => {
   try {
     let CarId;
-    const { user, brand, model, title, description, totalScore, ratings } = req.body;
+    const { user, brand, model, title, description, totalScore, ratings, image } = req.body;
     const foundCar = await Car.findOne({ brand: brand, model: model }); // find car by brand and models
 
     if (!foundCar) {
       const newCar = await Car.create({ brand, model });
-
       CarId = newCar._id;
     } else {
       CarId = foundCar._id;
@@ -79,8 +90,13 @@ router.post("/api/newrating", async (req, res, next) => {
     const createdRating = await Rating.create(newRating);
 
     await Car.findByIdAndUpdate(CarId, {
-      $push: { ratings: createdRating._id, overallTotalScore: createdRating.totalScore },
+      $push: { ratings: createdRating._id },
     });
+    if (image !== "") {
+      await Car.findByIdAndUpdate(CarId, {
+        $push: { image: image },
+      });
+    }
 
     // update totalscore here
 
