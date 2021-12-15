@@ -46,9 +46,13 @@ router.get("/api/rating/:ratingID", async (req, res, next) => {
 router.put("/api/rating/:ratingID", async (req, res, next) => {
   try {
     const { ratingID } = req.params;
-    const { title, description, ratings } = req.body;
+    const { title, description, ratings, totalScore } = req.body;
 
-    const updatedRating = await Rating.findByIdAndUpdate(ratingID, { title, description, ratings }, { new: true });
+    const updatedRating = await Rating.findByIdAndUpdate(
+      ratingID,
+      { title, description, ratings, totalScore },
+      { new: true }
+    );
     res.status(200).json(updatedRating); // load one rating
   } catch (error) {
     next(error);
@@ -108,6 +112,17 @@ router.post("/api/newrating", async (req, res, next) => {
     next(error);
   }
 });
+
+router.delete("api/delete/:ratingID"),
+  async (req, res, next) => {
+    try {
+      const { ratingID } = req.params;
+      await Rating.findByIdAndDelete(ratingID);
+      res.status(200);
+    } catch (error) {
+      next(error);
+    }
+  };
 
 // add rating form
 
