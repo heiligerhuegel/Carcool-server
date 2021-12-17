@@ -39,11 +39,7 @@ router.put("/api/user/edit", isAuthenticated, async (req, res, next) => {
     const currentUser = req.payload;
     const { email, name, image } = req.body;
 
-    const updatedUser = await User.findByIdAndUpdate(
-      currentUser._id,
-      { email, name, image },
-      { new: true }
-    );
+    const updatedUser = await User.findByIdAndUpdate(currentUser._id, { email, name, image }, { new: true });
 
     res.status(200).json(updatedUser);
   } catch (error) {
@@ -65,50 +61,38 @@ router.delete("/api/user/delete/", isAuthenticated, async (req, res, next) => {
 });
 
 // show form to edit one rating
-router.get(
-  "/api/rating/edit/:ratingID",
-  isAuthenticated,
-  async (req, res, next) => {
-    try {
-      const currentUser = req.payload;
-      const userID = currentUser._id;
+router.get("/api/rating/edit/:ratingID", isAuthenticated, async (req, res, next) => {
+  try {
+    const currentUser = req.payload;
+    const userID = currentUser._id;
 
-      const { ratingID } = req.params;
+    const { ratingID } = req.params;
 
-      const oneRating = await Rating.findOne({
-        user: userID,
-        _id: ratingID,
-      });
+    const oneRating = await Rating.findOne({
+      user: userID,
+      _id: ratingID,
+    });
 
-      res.status(200).json(oneRating); // load one rating
-    } catch (error) {
-      next(error);
-    }
+    res.status(200).json(oneRating); // load one rating
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 //  edit for one rating
-router.put(
-  "/api/rating/edit/:ratingID",
-  isAuthenticated,
-  async (req, res, next) => {
-    try {
-      const { ratingID } = req.params;
+router.put("/api/rating/edit/:ratingID", isAuthenticated, async (req, res, next) => {
+  try {
+    const { ratingID } = req.params;
 
-      const { title, description, ratings } = req.body;
+    const { title, description, ratings } = req.body;
 
-      const updatedRating = await Rating.findByIdAndUpdate(
-        ratingID,
-        { title, description, ratings },
-        { new: true }
-      );
+    const updatedRating = await Rating.findByIdAndUpdate(ratingID, { title, description, ratings }, { new: true });
 
-      res.status(200).json(updatedRating); // load one rating
-    } catch (error) {
-      next(error);
-    }
+    res.status(200).json(updatedRating); // load one rating
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 // delete the rating of a car
 router.delete("/api/rating/delete/:ratingID", async (req, res, next) => {
